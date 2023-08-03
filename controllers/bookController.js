@@ -25,7 +25,7 @@ const bookController = {
             res.status(500).json(error)
         }
     },
-    getAllBook:( req, res ) =>
+    getAllBook:async( req, res ) =>
     {
         try
         {
@@ -45,12 +45,12 @@ const bookController = {
                 filte = {...filte,authors: { $in: req.query.author.split( " " ) }}   
             }
             
-            const books = Book.find( filte ).skip( ( page - 1 ) * limit ).limit( limit )
-            const total = Book.countDocuments( filte )
-            Promise.all( [ books, total ] ).then( (results) =>
-            {
-                res.status(200).json({total:results[1],books:results[0]})
-            })
+            const [books, total] = await Promise.all([
+    Book.find(filte).skip((page - 1) * limit).limit(limit),
+    Book.countDocuments(filte),
+  ]);
+
+  res.status(200).json({ total, books });
         } catch ( error )
         {
             console.log(error)
