@@ -8,6 +8,7 @@ const exportOrderController = require("../controllers/exportOrderController")
 router.get( "/",authMiddlewares.verifyAdmin, userController.getAllUser )
 router.post("/register",userController.register)
 router.post( "/login", userController.login )
+router.post("/refresh")
 router.put( "/:userId", authMiddlewares.verifyIdentityAndAdmin, userController.changeInfo )
 
 //cart

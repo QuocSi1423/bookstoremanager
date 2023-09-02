@@ -8,7 +8,8 @@ const cors = require("cors")
 const userRoute = require("./routes/userRoute")
 const bookRoute = require("./routes/bookRoute")
 const expOrderRoute = require( "./routes/exportOrderRoute" )
-const generesRoute = require("./routes/generesRoute")
+const generesRoute = require( "./routes/generesRoute" )
+const authorRoute = require("./routes/authorRoute")
 dotenv.config()
 const app = express()
 const connectDB = async() => {
@@ -29,7 +30,7 @@ app.use( "/v1/users", userRoute )
 app.use( "/v1/books", bookRoute )
 app.use( "/v1/exp-orders", expOrderRoute )
 app.use("/v1/generes",generesRoute)
-
+app.use("/v1/authors",authorRoute)
 
 app.listen( process.env.PORT || 8000, () =>
 {

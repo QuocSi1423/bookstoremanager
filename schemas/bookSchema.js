@@ -15,7 +15,7 @@ const bookSchema = new mongoose.Schema( {
         default:0
     },
     authors: {
-        type: [String],
+        type: [mongoose.Schema.ObjectId],
         default:[]
     },
     price: {
@@ -24,14 +24,35 @@ const bookSchema = new mongoose.Schema( {
     },
     pages: {
         type: Number,
+        default:0
     },
     generes: {
         type: [ mongoose.Schema.ObjectId ],
         ref:"Generes",
-        default:[]
+        default: [],
     },
     urlImage: {
         type:String
+    },
+    sale: {
+        type: Number,
+        default: 0
+    },
+    publisher: {
+        type: String,
+        default:''
+    },
+    distributor: {
+        type: String,
+        default:''
+    },
+    publicationDate: {
+        type: String,
+        default:''
+    },
+    description: {
+        type: [String],
+        default:[]
     }
 })
 

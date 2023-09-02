@@ -31,29 +31,55 @@ const bookController = {
         {
             const page = req.query.page || 1
             const limit = req.query.limit || 15
+            const fields = req.query.fields || ''
             let filte = {}
             if ( req.query.search_query )
             {
                 filte = {...filte,  $text: { $search: req.query.search_query }}   
             }
-            if ( req.query.generes )
-            {
-                filte = {generes: { $in: req.query.generes.split( " " ) }}   
-            }
-            if ( req.query.author )
-            {
-                filte = {...filte,authors: { $in: req.query.author.split( " " ) }}   
-            }
             
-            const [books, total] = await Promise.all([
-    Book.find(filte).skip((page - 1) * limit).limit(limit),
-    Book.countDocuments(filte),
-  ]);
+            // if ( req.query.generes )
+            // {
+            //     filte = {...filte,generes: { $or: req.query.generes.split( " " ) }}    
+            // }
+            // if ( req.query.authors )
+            // {
+            //     filte = {...filte,authors: { $or: req.query.authors.split( " " ) }}   
+            // }
+            
+            const orConditions = [];
 
-  res.status(200).json({ total, books });
+            if (req.query.generes) {
+                const genresArray = req.query.generes.split(" ");
+                orConditions.push({ generes: { $in: genresArray } });
+            }
+
+            if ( req.query.saled == 'true' )
+            {
+                orConditions.push({sale:{$gt:0}})
+            }
+
+            if (req.query.authors) {
+                const authorsArray = req.query.authors.split(" ");
+                orConditions.push({ authors: { $in: authorsArray } });
+            }
+
+            if (orConditions.length > 0) {
+                filte = { ...filte, $or: orConditions };
+            }
+            const books =await Book.find( filte ,fields).skip( ( page - 1 ) * limit ).limit( limit )
+            const total = await Book.countDocuments( filte )
+            Promise.all( [ books, total ] ).then( (results) =>
+            {
+                res.status(200).json({total:results[1],books:results[0]})
+            } )
+                .catch( error =>
+                {
+                
+            res.status(500).json(error)
+            })
         } catch ( error )
         {
-            console.log(error)
             res.status(500).json(error)
         }
     },
